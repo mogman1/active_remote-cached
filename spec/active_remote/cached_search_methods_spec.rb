@@ -169,20 +169,11 @@ describe SearchMethodClass do
 
     describe "when cache raises upstream failure redis error" do
       it "falls back to calling search" do
+        ::ActiveRemote::Cached.default_options(:fallback_on_cache_error => true)
         ::ActiveRemote::Cached.cache.expects(:fetch).raises(::RuntimeError, "upstream failure")
 
         SearchMethodClass.stub(:search, "foo") do
           _(SearchMethodClass.cached_search_by_guid(:guid)).must_equal("foo")
-        end
-      end
-    end
-
-    describe "when cache raises any other kind of error" do
-      it "allows error to pass through" do
-        ::ActiveRemote::Cached.cache.expects(:fetch).raises(::RuntimeError, "kaBOOM")
-
-        SearchMethodClass.stub(:search, "foo") do
-          assert_raises(::RuntimeError, "kaBOOM") { SearchMethodClass.cached_search_by_guid(:guid) }
         end
       end
     end

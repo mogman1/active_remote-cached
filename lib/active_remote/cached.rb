@@ -190,9 +190,6 @@ module ActiveRemote
             ].compact
 
             ::ActiveRemote::Cached.cache.exist?(cache_key)
-          rescue => e
-            return false if e.message.include?("upstream failure")
-            raise
           end
         RUBY
 
@@ -220,9 +217,6 @@ module ActiveRemote
             ].compact
 
             ::ActiveRemote::Cached.cache.exist?(cache_key)
-          rescue => e
-            return false if e.message.include?("upstream failure")
-            raise
           end
         RUBY
 
@@ -269,9 +263,6 @@ module ActiveRemote
                 self.find(#{expanded_search_args})
               end
             end
-          rescue => e
-            return self.find(#{expanded_search_args}) if e.message.include?("upstream failure")
-            raise
           end
         RUBY
       end
@@ -320,9 +311,6 @@ module ActiveRemote
                 self.search(#{expanded_search_args})
               end
             end
-          rescue => e
-            return self.search(#{expanded_search_args}) if e.message.include?("upstream failure")
-            raise
           end
         RUBY
       end
@@ -381,13 +369,6 @@ module ActiveRemote
               raise ::ActiveRemote::RemoteRecordNotFound.new(self.class) if results.first.nil?
               results
             end
-          rescue => e
-            if e.message.include?("upstream failure")
-              results = self.search(#{expanded_search_args})
-              raise ::ActiveRemote::RemoteRecordNotFound.new(self.class) if results.first.nil?
-              return results
-            end
-            raise
           end
         RUBY
       end
